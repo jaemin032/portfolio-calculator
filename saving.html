@@ -9,24 +9,27 @@
   <script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
   <style>
     .container { margin: 20px;}
+    #custom-form { width: 200px;}
   </style>
 </head>
 <body>
   <div class="container">
-    <a href="saving.html">test</a>
-    <h3>Net Worth History<br></h3>
+    <h3>Savings History<br></h3>
 
-    <form name="variables" action="javascript:;" onsubmit="getInput(this)">
+    <form name="variables" action="javascript:;" onsubmit="getInput()">
       Net Worth:<br>
-      <input type="text" name="netWorth" value="10000">
+      <input type="text" name="netWorth" value="0" class="form-control" id="custom-form">
       <br>
-      Rate of total investment:<br>
-      <input type="text" name="rateOfTotalInvestment" value="0.1">
+      Monthly savings:<br>
+      <input type="text" name="monthlySavings" value="0" class="form-control" id="custom-form">
       <br>
-      Number of investments:<br>
-      <input type="text" name="numInvestments" value="1000">
-      <br><br>
-      <input type="submit" value="Submit">
+      Annual return percentage:<br>
+      <input type="text" name="returnPercentage" value="0" class="form-control" id="custom-form">
+      <br>
+      Years Invested:<br>
+      <input type="text" name="yearsInvested" value="0" class="form-control" id="custom-form">
+      <br>
+      <input type="submit" value="Submit" class="btn btn-outline-dark">
     </form>
 
     <div id="chart"></div>
@@ -42,47 +45,45 @@
 <script>
   let x = [];
   let y = [];
-  let netWorth = 10000;
-  let capital = 100;
-  let numInvestments=100;
+  let netWorth = 0;
+  let monthlySavings = 0;
+  let returnPercentage = 0;
+  let yearsInvested = 0;
 
   function getInput() {
     netWorth = document.forms["variables"]["netWorth"].value;
-    rateOfTotalInvestment = document.forms["variables"]["rateOfTotalInvestment"].value;
-    numInvestments = document.forms["variables"]["numInvestments"].value;
+    monthlySavings = document.forms["variables"]["monthlySavings"].value;
+    returnPercentage = document.forms["variables"]["returnPercentage"].value;
+    yearsInvested = document.forms["variables"]["yearsInvested"].value;
     reRun();
     plotGraph();
   }
 
 
   function investment(capital) {
-    if(Math.random()>0.4)
-      return capital*2;
-    else {
-      return 0;
-    }
+    const returnRate = returnPercentage * 0.01 + 1;
+    return capital * returnRate;
   }
 
   function reRun() {
     x=[];
     y=[];
-    for(let i=0; i<numInvestments; i++)
+    for(let i=2; i<=yearsInvested; i++)
     {
-      capital = netWorth * rateOfTotalInvestment;
-      netWorth = netWorth - capital + investment(capital);
-      //displayNetWorth.innerHTML += netWorth + "<br>";
       x.push(i);
       y.push(netWorth);
+      netWorth += monthlySavings*13;
+      netWorth = investment(netWorth);
     }
   }
 
   function plotGraph() {
-    var trace1 = {
+    const trace1 = {
       x: x,
       y: y,
       type: 'scatter'
     };
-    var data = [trace1];
+    const data = [trace1];
     Plotly.newPlot('chart', data);
   }
 </script>
