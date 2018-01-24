@@ -4,85 +4,121 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <title>Saving History</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
   <style>
     .container { margin: 20px;}
+    #custom-form { width: 200px; }
+
+    @media (max-width: 780px)
+    {
+      .container {
+        margin: 40px auto;
+        width: 400px;
+        text-align: center;
+      }
+
+      .inputform {
+        width: 200px;
+        margin: 0 auto;
+      }
+
+    }
+
+    @media (min-width: 800px)
+    {
+      #custom-form { width: 200px; }
+      .inputform {
+        float:left;
+        margin-top: 50px;
+      }
+      #chart {
+        float: right;
+      }
+    }
+
   </style>
 </head>
 <body>
   <div class="container">
-    <a href="saving.html">test</a>
-    <h3>Net Worth History<br></h3>
-
-    <form name="variables" action="javascript:;" onsubmit="getInput(this)">
-      Net Worth:<br>
-      <input type="text" name="netWorth" value="10000">
-      <br>
-      Rate of total investment:<br>
-      <input type="text" name="rateOfTotalInvestment" value="0.1">
-      <br>
-      Number of investments:<br>
-      <input type="text" name="numInvestments" value="1000">
-      <br><br>
-      <input type="submit" value="Submit">
-    </form>
-
+    <h3>Savings History<br></h3>
+    <div class="inputform">
+      <form name="variables" action = "javascript:getInput();" id='variables'>
+        Net Worth:<br>
+        <input type="text" name="netWorth" value="10" class="form-control" id="custom-form">
+        <br>
+        Monthly savings:<br>
+        <input type="text" name="monthlySavings" value="10" class="form-control" id="custom-form">
+        <br>
+        Annual return percentage:<br>
+        <input type="text" name="returnPercentage" value="10" class="form-control" id="custom-form">
+        <br>
+        Years Invested:<br>
+        <input type="text" name="yearsInvested" value="10" class="form-control" id="custom-form">
+        <br>
+        <button id="submit" class="btn btn-outline-dark">Submit</button>
+      </form>
+    </div>
     <div id="chart"></div>
   </div>
 
+  <a href="net-worth.html" style="margin: 20px;">Net Worth</a>
 
 
-
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 <script>
   let x = [];
   let y = [];
-  let netWorth = 10000;
-  let capital = 100;
-  let numInvestments=100;
+  let netWorth = 10;
+  let monthlySavings = 10;
+  let returnPercentage = 10;
+  let yearsInvested = 10;
 
   function getInput() {
     netWorth = document.forms["variables"]["netWorth"].value;
-    rateOfTotalInvestment = document.forms["variables"]["rateOfTotalInvestment"].value;
-    numInvestments = document.forms["variables"]["numInvestments"].value;
+    monthlySavings = document.forms["variables"]["monthlySavings"].value;
+    returnPercentage = document.forms["variables"]["returnPercentage"].value;
+    yearsInvested = document.forms["variables"]["yearsInvested"].value;
     reRun();
     plotGraph();
   }
 
 
   function investment(capital) {
-    if(Math.random()>0.4)
-      return capital*2;
-    else {
-      return 0;
-    }
+    const returnRate = returnPercentage * 0.01 + 1;
+    return capital * returnRate;
   }
 
   function reRun() {
     x=[];
     y=[];
-    for(let i=0; i<numInvestments; i++)
+    for(let i=0; i<=yearsInvested; i++)
     {
-      capital = netWorth * rateOfTotalInvestment;
-      netWorth = netWorth - capital + investment(capital);
-      //displayNetWorth.innerHTML += netWorth + "<br>";
+      console.log("networth: " + netWorth);
+      console.log("years Invested: " + yearsInvested);
+      console.log("i: " + i);
       x.push(i);
       y.push(netWorth);
+      console.log("after push networth: " + netWorth);
+      console.log("current monthlySavings settings: " + monthlySavings);
+      netWorth = Number(netWorth) + Number(monthlySavings)*13;
+      console.log("after monthlySavings networth: " + netWorth);
+      netWorth = investment(netWorth);
+      console.log('networth after operation : '+netWorth + "\n\n");
     }
   }
 
   function plotGraph() {
-    var trace1 = {
+    const trace1 = {
       x: x,
       y: y,
       type: 'scatter'
     };
-    var data = [trace1];
+    const data = [trace1];
     Plotly.newPlot('chart', data);
   }
 </script>
